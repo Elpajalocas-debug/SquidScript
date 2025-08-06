@@ -1,0 +1,64 @@
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+function teleportPlayer()
+    -- Cambia la posición de teletransporte aquí si lo deseas
+    local character = player.Character or player.CharacterAdded:Wait()
+    if character then
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            humanoidRootPart.CFrame = CFrame.new(0, 12.989997863769531, 384.6000061035156) -- Cambia la posición si es necesario
+        end
+    end
+end
+
+function createGui()
+    -- Elimina la GUI anterior si existe
+    local playerGui = player:WaitForChild("PlayerGui")
+    local oldGui = playerGui:FindFirstChild("TeleportGui")
+    if oldGui then
+        oldGui:Destroy()
+    end
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "TeleportGui"
+    screenGui.Parent = playerGui
+
+    -- Crea un Frame para que sea movible
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Size = UDim2.new(0, 220, 0, 120)
+    mainFrame.Position = UDim2.new(0.5, -110, 0.8, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    mainFrame.BackgroundTransparency = 0.2
+    mainFrame.Active = true
+    mainFrame.Draggable = true
+    mainFrame.Parent = screenGui
+
+    local teleportButton = Instance.new("TextButton")
+    teleportButton.Name = "TeleportButton"
+    teleportButton.Size = UDim2.new(0, 200, 0, 50)
+    teleportButton.Position = UDim2.new(0, 10, 0, 10)
+    teleportButton.Text = "Teletransportarse"
+    teleportButton.Parent = mainFrame
+    teleportButton.MouseButton1Click:Connect(teleportPlayer)
+
+    local verVidriosButton = Instance.new("TextButton")
+    verVidriosButton.Name = "VerVidriosButton"
+    verVidriosButton.Size = UDim2.new(0, 200, 0, 50)
+    verVidriosButton.Position = UDim2.new(0, 10, 0, 60)
+    verVidriosButton.Text = "NO funciona"
+    verVidriosButton.Parent = mainFrame
+    -- El botón "Ver Vidrios" ahora solo está para mostrar, la lógica está en el servidor
+end
+
+-- Crear la GUI al inicio
+createGui()
+
+-- Volver a crear la GUI cada vez que el personaje reaparece (PlayerGui se reinicia)
+player.CharacterAdded:Connect(function()
+    task.wait(0.1) -- Espera breve para asegurar que PlayerGui esté listo
+    createGui()
+end)
